@@ -1,53 +1,59 @@
 @model IEnumerable<Mochilog.Models.MochiPhoto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Mochi Gallery";
 }
 
-<h1>Index</h1>
+<h2 class="gallery-title">Mochi Gallery</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UploadedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UploadedAt)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="mochi-gallery">
+    @foreach (var item in Model)
+    {
+        <div class="mochi-card">
+            <img src="~/images/@item.ImageFileName" alt="@item.Title" class="mochi-thumb" />
+            <h3>@item.Title</h3>
+            <p>@item.Description</p>
+            <p class="upload-date">Uploaded: @item.UploadedAt.ToString("MMMM d, yyyy")</p>
+        </div>
+    }
+</div>
+
+<style>
+    .gallery-title {
+        text-align: center;
+        color: white;
+        margin-top: 2rem;
+        text-shadow: 0 0 5px black;
+    }
+
+    .mochi-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .mochi-card {
+        background: rgba(0, 0, 0, 0.5);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+
+    .mochi-thumb {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        object-fit: cover;
+        max-height: 200px;
+    }
+
+    .upload-date {
+        font-size: 0.9rem;
+        color: #ccc;
+        margin-top: 0.5rem;
+    }
+</style>

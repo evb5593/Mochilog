@@ -9,15 +9,53 @@
     <link rel="stylesheet" href="~/Mochilog.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @if (Context.Request.Path != "/")
+    {
+        <a href="/" class="back-button">← Back</a>
+    }
+    <div id="bg-fallback"></div>
+    <video
+        autoplay
+        muted
+        loop
+        playsinline
+        id="bg-video"
+        style="visibility: hidden;"
+    >
+        <source src="/videos/MochilogBackground.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
     <div class="container">
         <main role="main" class="pb-3">
-            @RenderBody()
+            <div class="fade-container">
+                @RenderBody()
+            </div>
         </main>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        const video = document.getElementById("bg-video");
+
+        window.addEventListener("beforeunload", () => {
+            sessionStorage.setItem("videoTime", video.currentTime);
+        });
+
+        const savedTime = sessionStorage.getItem("videoTime");
+
+        if (savedTime) {
+            video.addEventListener("loadedmetadata", function onLoaded() {
+                video.currentTime = parseFloat(savedTime);
+                video.style.visibility = "visible";
+                video.removeEventListener("loadedmetadata", onLoaded);
+            });
+        } else {
+            video.style.visibility = "visible";
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
