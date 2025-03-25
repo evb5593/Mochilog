@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Mochilog.Data;
 using Mochilog.Models;
+using Mochilog.Data;
 
 namespace Mochilog.Controllers
 {
     public class MochiPhotosController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public MochiPhotosController(AppDbContext context)
+        public MochiPhotosController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -22,7 +22,7 @@ namespace Mochilog.Controllers
         // GET: MochiPhotos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.MochiPhotos.ToListAsync());
+            return View(await _context.MochiPhoto.ToListAsync());
         }
 
         // GET: MochiPhotos/Details/5
@@ -33,7 +33,7 @@ namespace Mochilog.Controllers
                 return NotFound();
             }
 
-            var mochiPhoto = await _context.MochiPhotos
+            var mochiPhoto = await _context.MochiPhoto
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (mochiPhoto == null)
             {
@@ -54,7 +54,7 @@ namespace Mochilog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,ImageFileName,UploadedAt")] MochiPhoto mochiPhoto)
+        public async Task<IActionResult> Create([Bind("Id,Title,PicTakenDate,UploadDate,ImageFileName")] MochiPhoto mochiPhoto)
         {
             if (ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace Mochilog.Controllers
                 return NotFound();
             }
 
-            var mochiPhoto = await _context.MochiPhotos.FindAsync(id);
+            var mochiPhoto = await _context.MochiPhoto.FindAsync(id);
             if (mochiPhoto == null)
             {
                 return NotFound();
@@ -86,7 +86,7 @@ namespace Mochilog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,ImageFileName,UploadedAt")] MochiPhoto mochiPhoto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,PicTakenDate,UploadDate,ImageFileName")] MochiPhoto mochiPhoto)
         {
             if (id != mochiPhoto.Id)
             {
@@ -124,7 +124,7 @@ namespace Mochilog.Controllers
                 return NotFound();
             }
 
-            var mochiPhoto = await _context.MochiPhotos
+            var mochiPhoto = await _context.MochiPhoto
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (mochiPhoto == null)
             {
@@ -139,10 +139,10 @@ namespace Mochilog.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var mochiPhoto = await _context.MochiPhotos.FindAsync(id);
+            var mochiPhoto = await _context.MochiPhoto.FindAsync(id);
             if (mochiPhoto != null)
             {
-                _context.MochiPhotos.Remove(mochiPhoto);
+                _context.MochiPhoto.Remove(mochiPhoto);
             }
 
             await _context.SaveChangesAsync();
@@ -151,7 +151,7 @@ namespace Mochilog.Controllers
 
         private bool MochiPhotoExists(int id)
         {
-            return _context.MochiPhotos.Any(e => e.Id == id);
+            return _context.MochiPhoto.Any(e => e.Id == id);
         }
     }
 }
