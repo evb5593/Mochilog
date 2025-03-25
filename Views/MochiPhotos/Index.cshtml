@@ -27,6 +27,8 @@
             <h3>@item.Title</h3>
             <p class="upload-date">Taken: @item.PicTakenDate.ToString("MMMM d, yyyy")</p>
             <p class="upload-date">Uploaded: @item.UploadDate.ToString("MMMM d, yyyy")</p>
+
+            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-light mt-2">Edit</a>
         </div>
     }
 </div>
