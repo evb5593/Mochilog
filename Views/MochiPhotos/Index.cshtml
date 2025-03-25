@@ -6,6 +6,19 @@
 
 <h2 class="gallery-title">Mochi Gallery</h2>
 
+<div class="sort-container">
+    <label for="sort-select">Sort by:</label>
+    <select id="sort-select">
+        <option value="none">None</option>
+        <option value="title-asc">Title (A-Z)</option>
+        <option value="title-desc">Title (Z-A)</option>
+        <option value="taken-new">Taken (Newest)</option>
+        <option value="taken-old">Taken (Oldest)</option>
+        <option value="uploaded-new">Uploaded (Newest)</option>
+        <option value="uploaded-old">Uploaded (Oldest)</option>
+    </select>
+</div>
+
 <div class="mochi-gallery">
     @foreach (var item in Model)
     {
@@ -103,8 +116,33 @@
         border-radius: 15px;
         box-shadow: 0 0 20px rgba(255,255,255,0.3);
     }    
+
+    .sort-container {
+        text-align: center;
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    #sort-select {
+        margin-left: 0.5rem;
+        padding: 0.3rem 0.5rem;
+        border-radius: 5px;
+        border: none;
+        font-size: 1rem;
+    }
 </style>
 <script>
+    const sortMappings = {
+        "none": () => 0,
+        "title-asc": (a, b) => a.title.localeCompare(b.title),
+        "title-desc": (a, b) => b.title.localeCompare(a.title),
+        "taken-new": (a, b) => b.taken - a.taken,
+        "taken-old": (a, b) => a.taken - b.taken,
+        "uploaded-new": (a, b) => b.uploaded - a.uploaded,
+        "uploaded-old": (a, b) => a.uploaded - b.uploaded
+    };
+
+
     const modal = document.getElementById("image-modal");
     const modalImage = document.getElementById("modal-image");
 
@@ -118,4 +156,24 @@
     function closeModal() {
         modal.style.display = "none";
     }
+
+    const sortSelect = document.getElementById("sort-select");
+    const gallery = document.querySelector(".mochi-gallery");
+
+    sortSelect.addEventListener("change", () => {
+        const cards = Array.from(gallery.children).map(card => ({
+            element: card,
+            title: card.querySelector("h3").textContent.trim(),
+            taken: new Date(card.querySelectorAll(".upload-date")[0].textContent.replace("Taken: ", "")),
+            uploaded: new Date(card.querySelectorAll(".upload-date")[1].textContent.replace("Uploaded: ", ""))
+        }));
+
+        const mode = sortSelect.value;
+        const strategy = sortMappings[mode] || sortMappings["none"];
+
+        cards.sort(strategy);
+
+        gallery.innerHTML = "";
+        cards.forEach(c => gallery.appendChild(c.element));
+    });
 </script>
