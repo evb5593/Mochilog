@@ -16,41 +16,6 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-
-    string? adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
-    string? adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
-
-    if (!string.IsNullOrWhiteSpace(adminEmail) && !string.IsNullOrWhiteSpace(adminPassword))
-    {
-        var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        if (adminUser == null)
-        {
-            var user = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
-            var result = await userManager.CreateAsync(user, adminPassword);
-            if (!result.Succeeded)
-            {
-                Console.WriteLine("Admin user creation failed:");
-                foreach (var error in result.Errors)
-                {
-                    Console.WriteLine($" - {error.Code}: {error.Description}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Admin user created successfully.");
-            }
-        }
-    }
-    else
-    {
-        Console.WriteLine("ADMIN_EMAIL or ADMIN_PASSWORD environment variable not set. Admin user was not created.");
-    }
-}
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -72,5 +37,46 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
+
+    using (var adminScope = app.Services.CreateScope())
+    {
+        var services = adminScope.ServiceProvider;
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+
+        string? adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
+        string? adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
+
+        if (!string.IsNullOrWhiteSpace(adminEmail) && !string.IsNullOrWhiteSpace(adminPassword))
+        {
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+            if (adminUser == null)
+            {
+                var user = new IdentityUser { UserName = adminEmail, Email = adminEmail, EmailConfirmed = true };
+                var result = await userManager.CreateAsync(user, adminPassword);
+                if (!result.Succeeded)
+                {
+                    Console.WriteLine("Admin user creation failed:");
+                    foreach (var error in result.Errors)
+                    {
+                        Console.WriteLine($" - {error.Code}: {error.Description}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Admin user created successfully.");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("ADMIN_EMAIL or ADMIN_PASSWORD environment variable not set. Admin user was not created.");
+        }
+    }
+}
 
 app.Run();
