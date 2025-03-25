@@ -9,7 +9,8 @@
 
 <div class="overlay-content">
     <div id="mochi-container">
-        <img id="mochi-image" src="/images/mochi1.jpg" alt="Mochi" />
+        <img class="mochi-image active" src="/images/mochi1.jpg" />
+        <img class="mochi-image" src="/images/mochi2.jpg" />
     </div>
 
     <div class="nav-links">
@@ -19,12 +20,13 @@
 </div>
 
 <style>
-    body, html {
+    html, body {
         margin: 0;
         padding: 0;
-        overflow: hidden;
         height: 100%;
         font-family: 'Segoe UI', sans-serif;
+        color: white;
+        overflow: hidden;
     }
 
     #bg-video {
@@ -38,21 +40,41 @@
     }
 
     .overlay-content {
-        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        padding-top: 0; 
         min-height: 100vh;
-        color: white;
+        position: relative;
         text-shadow: 0 0 5px black;
+        z-index: 1;
     }
 
-    #mochi-container img {
-        max-width: 300px;
+    #mochi-container {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin-bottom: 30px;
+    }
+
+    .mochi-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
         border-radius: 20px;
-        animation: float 5s ease-in-out infinite;
-        box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        opacity: 0;
+        transition: opacity 1.5s ease-in-out;
+        animation: float 3s infinite ease-in-out; 
+    }
+
+    .mochi-image.active {
+        opacity: 1;
+        z-index: 1;
     }
 
     @@keyframes float {
@@ -62,14 +84,14 @@
     }
 
     .nav-links {
-        margin-top: 30px;
         display: flex;
         gap: 2rem;
+        margin-top: 1rem;
     }
 
     .nav-links a {
         color: white;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.5);
         padding: 0.75rem 1.5rem;
         border-radius: 10px;
         text-decoration: none;
@@ -88,10 +110,24 @@
         "/images/mochi2.jpg",
         "/images/mochi3.jpg"
     ];
+
     let current = 0;
+    const [imgA, imgB] = document.querySelectorAll(".mochi-image");
+    let isAActive = true;
 
     setInterval(() => {
         current = (current + 1) % mochiImages.length;
-        document.getElementById("mochi-image").src = mochiImages[current];
+
+        if (isAActive) {
+            imgB.src = mochiImages[current];
+            imgA.classList.remove("active");
+            imgB.classList.add("active");
+        } else {
+            imgA.src = mochiImages[current];
+            imgB.classList.remove("active");
+            imgA.classList.add("active");
+        }
+
+        isAActive = !isAActive;
     }, 5000);
 </script>
