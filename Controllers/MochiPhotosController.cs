@@ -54,8 +54,15 @@ namespace Mochilog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,PicTakenDate,UploadDate,ImageFileName")] MochiPhoto mochiPhoto)
+        public async Task<IActionResult> Create(MochiPhoto mochiPhoto, IFormFile? ImageUpload)
         {
+            if (ImageUpload != null && ImageUpload.Length > 0)
+            {
+                using var memoryStream = new MemoryStream();
+                await ImageUpload.CopyToAsync(memoryStream);
+                mochiPhoto.ImageData = memoryStream.ToArray();
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(mochiPhoto);
@@ -152,6 +159,13 @@ namespace Mochilog.Controllers
         private bool MochiPhotoExists(int id)
         {
             return _context.MochiPhoto.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> GetImage(int id)
+        {
+            var mochi = await _context.MochiPhoto.FindAsync(id);
+            if (mochi == null || mochi.ImageData == null) return NotFound();
+            return File(mochi.ImageData, "image/jpeg");
         }
     }
 }

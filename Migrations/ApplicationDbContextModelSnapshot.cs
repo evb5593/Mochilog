@@ -26,10 +26,6 @@ namespace Mochilog.Migrations
                     b.Property<byte[]>("ImageData")
                         .HasColumnType("BLOB");
 
-                    b.Property<string>("ImageFileName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("PicTakenDate")
                         .HasColumnType("TEXT");
 

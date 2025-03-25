@@ -7,7 +7,7 @@
 <h2 class="form-title">Add a new picture of Mochi</h2>
 
 <div class="form-container">
-    <form asp-action="Create">
+    <form asp-action="Create" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <label asp-for="Title" class="form-label"></label>
@@ -22,9 +22,8 @@
         <input asp-for="UploadDate" type="date" class="form-input" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
         <span asp-validation-for="UploadDate" class="text-danger"></span>
 
-        <label asp-for="ImageFileName" class="form-label">Image File Name</label>
-        <input asp-for="ImageFileName" class="form-input" placeholder="mochi1.jpg" />
-        <span asp-validation-for="ImageFileName" class="text-danger"></span>
+        <label class="form-label" for="ImageUpload">Upload Image</label>
+        <input type="file" name="ImageUpload" accept="image/*" class="form-input" />
 
         <button type="submit" class="submit-button">Upload Mochi</button>
     </form>

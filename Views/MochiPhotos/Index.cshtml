@@ -23,7 +23,8 @@
     @foreach (var item in Model)
     {
         <div class="mochi-card">
-            <img src="~/images/@item.ImageFileName" alt="@item.Title" class="mochi-thumb" />
+            <img loading="lazy" src="@Url.Action("GetImage", "MochiPhotos", new { id = item.Id })"
+            alt="@item.Title" class="mochi-thumb" />
             <h3>@item.Title</h3>
             <p class="upload-date">Taken: @item.PicTakenDate.ToString("MMMM d, yyyy")</p>
             <p class="upload-date">Uploaded: @item.UploadDate.ToString("MMMM d, yyyy")</p>

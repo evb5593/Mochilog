@@ -15,9 +15,5 @@ public class MochiPhoto
 
     [Display(Name = "Date Uploaded")]
     public DateTime UploadDate { get; set; } = DateTime.Now;
-
-    [Display(Name = "Image File Name")]
-    public string ImageFileName { get; set; } = string.Empty;
-    
     public byte[]? ImageData { get; set; }
 }
