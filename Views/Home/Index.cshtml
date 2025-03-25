@@ -1,4 +1,8 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<IdentityUser> SignInManager
+
+@{
     ViewData["Title"] = "The Mochi-Log";
 }
 
@@ -14,7 +18,17 @@
 
     <div class="nav-links">
         <a href="/MochiPhotos">Gallery</a>
-        <a href="/MochiPhotos/Create">Add Mochi</a>
+
+        @if (SignInManager.IsSignedIn(User))
+        {
+            var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
+            var currentUser = await UserManager.GetUserAsync(User);
+
+            if (currentUser != null && currentUser.Email == adminEmail)
+            {
+                <a href="/MochiPhotos/Create">Add Mochi</a>
+            }
+        }
     </div>
 </div>
 

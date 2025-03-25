@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Mochilog.Models;
 using Mochilog.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mochilog.Controllers
 {
+    [Authorize]
     public class MochiPhotosController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,27 +22,10 @@ namespace Mochilog.Controllers
         }
 
         // GET: MochiPhotos
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             return View(await _context.MochiPhoto.ToListAsync());
-        }
-
-        // GET: MochiPhotos/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var mochiPhoto = await _context.MochiPhoto
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (mochiPhoto == null)
-            {
-                return NotFound();
-            }
-
-            return View(mochiPhoto);
         }
 
         // GET: MochiPhotos/Create
@@ -93,16 +78,22 @@ namespace Mochilog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,PicTakenDate,UploadDate")] MochiPhoto mochiPhoto, IFormFile? ImageUpload)
+        public async Task<IActionResult> Edit(int id, MochiPhoto mochiPhoto, IFormFile ImageUpload)
         {
-            if (id != mochiPhoto.Id) return NotFound();
+            if (id != mochiPhoto.Id)
+            {
+                return NotFound();
+            }
 
             var existingPhoto = await _context.MochiPhoto.FindAsync(id);
-            if (existingPhoto == null) return NotFound();
+            if (existingPhoto == null)
+            {
+                return NotFound();
+            }
 
             if (!ModelState.IsValid)
             {
-                return View(existingPhoto);
+                return View(mochiPhoto);
             }
 
             existingPhoto.Title = mochiPhoto.Title;
@@ -154,11 +145,7 @@ namespace Mochilog.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MochiPhotoExists(int id)
-        {
-            return _context.MochiPhoto.Any(e => e.Id == id);
-        }
-
+        [AllowAnonymous]
         public async Task<IActionResult> GetImage(int id)
         {
             var mochi = await _context.MochiPhoto.FindAsync(id);
@@ -167,6 +154,7 @@ namespace Mochilog.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetImageIds()
         {
             var ids = _context.MochiPhoto.Select(m => m.Id).ToList();
