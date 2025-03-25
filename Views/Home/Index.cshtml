@@ -1,8 +1,97 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "The Mochilog";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<video autoplay muted loop playsinline id="bg-video">
+    <source src="/videos/MochilogBackground.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<div class="overlay-content">
+    <div id="mochi-container">
+        <img id="mochi-image" src="/images/mochi1.jpg" alt="Mochi" />
+    </div>
+
+    <div class="nav-links">
+        <a href="/MochiPhotos">Gallery</a>
+        <a href="/MochiPhotos/Create">Add/Edit Mochi</a>
+    </div>
 </div>
+
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    #bg-video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover;
+        z-index: -1;
+    }
+
+    .overlay-content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        color: white;
+        text-shadow: 0 0 5px black;
+    }
+
+    #mochi-container img {
+        max-width: 300px;
+        border-radius: 20px;
+        animation: float 5s ease-in-out infinite;
+        box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    @@keyframes float {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0); }
+    }
+
+    .nav-links {
+        margin-top: 30px;
+        display: flex;
+        gap: 2rem;
+    }
+
+    .nav-links a {
+        color: white;
+        background: rgba(0,0,0,0.5);
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: background 0.3s ease;
+    }
+
+    .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+</style>
+
+<script>
+    const mochiImages = [
+        "/images/mochi1.jpg",
+        "/images/mochi2.jpg",
+        "/images/mochi3.jpg"
+    ];
+    let current = 0;
+
+    setInterval(() => {
+        current = (current + 1) % mochiImages.length;
+        document.getElementById("mochi-image").src = mochiImages[current];
+    }, 5000);
+</script>
