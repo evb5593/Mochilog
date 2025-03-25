@@ -167,5 +167,12 @@ namespace Mochilog.Controllers
             if (mochi == null || mochi.ImageData == null) return NotFound();
             return File(mochi.ImageData, "image/jpeg");
         }
+
+        [HttpGet]
+        public IActionResult GetImageIds()
+        {
+            var ids = _context.MochiPhoto.Select(m => m.Id).ToList();
+            return Json(ids);
+        }
     }
 }

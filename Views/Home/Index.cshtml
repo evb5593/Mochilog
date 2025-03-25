@@ -7,8 +7,8 @@
         <h2 class="gallery-title">The Mochi-Log</h2>
 
         <div id="mochi-container">
-            <img class="mochi-image active" src="/images/mochi1.jpg" />
-            <img class="mochi-image" src="/images/mochi2.jpg" />
+            <img class="mochi-image" />
+            <img class="mochi-image" />
         </div>
     </div>
 
@@ -69,7 +69,7 @@
         height: 100%;
         object-fit: cover;
         border-radius: 20px;
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
         opacity: 0;
         transition: opacity 1.5s ease-in-out;
     }
@@ -107,29 +107,66 @@
 </style>
 
 <script>
-    const mochiImages = [
-        "/images/mochi1.jpg",
-        "/images/mochi2.jpg",
-        "/images/mochi3.jpg"
-    ];
-
-    let current = 0;
     const [imgA, imgB] = document.querySelectorAll(".mochi-image");
     let isAActive = true;
+    let current = 0;
+    let imageIds = [];
 
-    setInterval(() => {
-        current = (current + 1) % mochiImages.length;
+    async function fetchImageIds() {
+        const res = await fetch("/MochiPhotos/GetImageIds");
+        imageIds = await res.json();
 
-        if (isAActive) {
-            imgB.src = mochiImages[current];
-            imgA.classList.remove("active");
-            imgB.classList.add("active");
-        } else {
-            imgA.src = mochiImages[current];
-            imgB.classList.remove("active");
+        if (imageIds.length < 2) return;
+
+        shuffleArray(imageIds);
+
+        const firstSrc = `/MochiPhotos/GetImage?id=${imageIds[0]}`;
+        const preloadImg = new Image();
+        preloadImg.onload = () => {
+            imgA.src = firstSrc;
             imgA.classList.add("active");
+
+            imgB.src = `/MochiPhotos/GetImage?id=${imageIds[1]}`;
+        };
+        preloadImg.src = firstSrc;
+    }
+
+    function cycleImages() {
+        if (imageIds.length === 0) return;
+
+        current++;
+
+        if (current >= imageIds.length) {
+            shuffleArray(imageIds);
+            current = 0;
         }
 
-        isAActive = !isAActive;
-    }, 5000);
+        const nextSrc = `/MochiPhotos/GetImage?id=${imageIds[current]}`;
+
+        const preloadImg = new Image();
+        preloadImg.onload = () => {
+            if (isAActive) {
+                imgB.src = nextSrc;
+                imgA.classList.remove("active");
+                imgB.classList.add("active");
+            } else {
+                imgA.src = nextSrc;
+                imgB.classList.remove("active");
+                imgA.classList.add("active");
+            }
+            isAActive = !isAActive;
+        };
+        preloadImg.src = nextSrc;
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    fetchImageIds().then(() => {
+        setInterval(cycleImages, 5000);
+    });
 </script>
