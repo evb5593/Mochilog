@@ -18,6 +18,10 @@
     }
 </div>
 
+<div id="image-modal" class="modal" onclick="closeModal()">
+    <img id="modal-image" />
+</div>
+
 <style>
     .gallery-title {
         text-align: center;
@@ -59,11 +63,53 @@
         margin-right: auto;
         border-radius: 10px;
         object-fit: contain;
+        transition: transform 0.3s ease;
+        cursor: pointer;
     }
+
+    .mochi-thumb:hover {
+        transform: scale(1.1);
+    }
+
 
     .upload-date {
         font-size: 0.9rem;
         color: #ccc;
         margin-top: 0.5rem;
     }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.8);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 15px;
+        box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }    
 </style>
+<script>
+    const modal = document.getElementById("image-modal");
+    const modalImage = document.getElementById("modal-image");
+
+    document.querySelectorAll(".mochi-thumb").forEach(img => {
+        img.addEventListener("click", () => {
+            modal.style.display = "flex";
+            modalImage.src = img.src;
+        });
+    });
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+</script>
