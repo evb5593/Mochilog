@@ -3,9 +3,13 @@
 }
 
 <div class="overlay-content">
-    <div id="mochi-container">
-        <img class="mochi-image active" src="/images/mochi1.jpg" />
-        <img class="mochi-image" src="/images/mochi2.jpg" />
+    <div id="mochi-title">
+        <h2 class="gallery-title">The Mochilog</h2>
+
+        <div id="mochi-container">
+            <img class="mochi-image active" src="/images/mochi1.jpg" />
+            <img class="mochi-image" src="/images/mochi2.jpg" />
+        </div>
     </div>
 
     <div class="nav-links">
@@ -36,6 +40,20 @@
         z-index: 1;
     }
 
+    #mochi-title {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: float 3s infinite ease-in-out;
+    }
+
+    .gallery-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 10px black;
+        animation: inherit;
+    }
+
     #mochi-container {
         position: relative;
         width: 300px;
@@ -54,7 +72,6 @@
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
         opacity: 0;
         transition: opacity 1.5s ease-in-out;
-        animation: float 3s infinite ease-in-out; 
     }
 
     .mochi-image.active {
